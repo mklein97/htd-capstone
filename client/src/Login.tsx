@@ -104,7 +104,7 @@ function Login ({ setUser } : LoginProps) {
 
                                 <button
                                     type="submit"
-                                    className="btn btn-primary mt-4 mr-3"
+                                    className="btn btn-primary mt-3 mr-3"
                                     >
                                     Login
                                 </button>
