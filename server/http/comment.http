@@ -1,0 +1,22 @@
+@url = http://localhost:8080/api
+@authToken = eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJOb29kZW15Iiwic3ViIjoidGVzdFVzZXIxIiwiYXV0aG9yaXRpZXMiOiJST0xFX1VTRVIiLCJleHAiOjE3NDkwNzcyMjJ9.vhKKeKR5X5fl1CVEtGrLH4CXCfs2TYMRpKpGupiuf3-oiFDjUtwxLY5GDZAZuWuqqLkaJm5_O87YUQKduZLuiQ
+
+GET {{url}}/courses/2/comments HTTP/1.1
+Authorization: Bearer {{authToken}}
+
+###
+GET {{url}}/users/2/comments HTTP/1.1
+Authorization: Bearer {{authToken}}
+
+###
+POST {{url}}/comments HTTP/1.1
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "enrollmentId": 2,
+  "createdAt": "2025-06-01",
+  "comment": "What a course!"
+}
+
+###

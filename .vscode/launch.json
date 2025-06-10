@@ -1,0 +1,32 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+        "name": "Launch Chrome against localhost",
+        "type": "chrome",
+        "request": "launch",
+        "url": "http://localhost:3000",
+        "webRoot": "C:/Users/Quang Pham/source/repos/_PROJECT_CURRENT/HTD/capstone-qmq/client/src"
+        },
+        {
+            "type": "java",
+            "name": "Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "App",
+            "request": "launch",
+            "mainClass": "learn.noodemy.App",
+            "projectName": "noodemy",
+            "env": {
+                "NOODEMY_DB_USERNAME": "root",
+                "NOODEMY_DB_PASSWORD": "password"
+            }
+        }
+    ]
+}

@@ -1,0 +1,46 @@
+@url = http://localhost:8080/api/courses
+@authToken = eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJOb29kZW15Iiwic3ViIjoidGVzdFVzZXIxIiwiYXV0aG9yaXRpZXMiOiJST0xFX1VTRVIiLCJleHAiOjE3NDkwNzIwNDF9.EmYFsExlqDiwJX4bpqU_Ec6mqm1Zi2fUQnNFsJQORuQZVSu-taFWSSRzQv2U1lPUzczhy058FydYVhtzKxwUgA
+
+GET {{url}} HTTP/1.1
+Authorization: Bearer {{authToken}}
+
+###
+GET {{url}}/users/2 HTTP/1.1
+Authorization: Bearer {{authToken}}
+
+###
+GET {{url}}/1 HTTP/1.1
+Authorization: Bearer {{authToken}}
+
+###
+POST {{url}} HTTP/1.1
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "courseName": "The course",
+  "courseDescription": "A simply captivating course",
+  "price": 100,
+  "estimateDuration": 100,
+  "categoryId": 1
+}
+
+###
+PUT {{url}}/4 HTTP/1.1
+Authorization: Bearer {{$auth.token()}}
+Content-Type: application/json
+
+{
+  "courseId": 4,
+  "courseName": "Updated course",
+  "courseDescription": "A simply, captivating, and exquisite course",
+  "price": 101,
+  "estimateDuration": 50,
+  "categoryId": 1
+}
+
+###
+DELETE {{url}}/4 HTTP/1.1
+Authorization: Bearer {{$auth.token()}}
+
+###

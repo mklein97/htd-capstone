@@ -1,0 +1,25 @@
+@url = http://localhost:8080
+
+### Register a new app user with user profile
+POST {{url}}/api/register HTTP/1.1
+Content-Type: application/json
+
+{
+  "username" : "test",
+  "password" : "kccvmck2",
+  "firstName" : "quang",
+  "lastName" : "pham",
+  "email" : "something@ran.com",
+  "dob" : "1996-10-19",
+  "roleId" : 1
+
+}
+
+### Generate a new JwtToken that is available for 15 mins
+POST {{url}}/api/authenticate HTTP/1.1
+Content-Type: application/json
+
+{
+  "username" : "testUser1",
+  "password" : "user1"
+}

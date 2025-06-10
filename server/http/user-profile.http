@@ -1,0 +1,11 @@
+@url = http://localhost:8080/api/users
+@authToken = yourAuthTokenHere
+
+GET {{url}} HTTP/1.1
+Authorization: Bearer {{authToken}}
+
+###
+GET {{url}}/4 HTTP/1.1
+Authorization: Bearer {{authToken}}
+
+###
