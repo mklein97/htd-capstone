@@ -133,6 +133,7 @@ export class CourseCardProps {
     userProfile: UserProfile;
     enrolled: boolean;
     featured?: boolean;
+    update?: (updateValue: string) => void;
 
     constructor(cdata: Course, userProfile: UserProfile, enrolled: boolean) {
         this.courseData = cdata;

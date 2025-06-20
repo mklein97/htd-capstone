@@ -8,7 +8,7 @@ const baseUrl = 'http://localhost:8080';
 const courseEndpoint = baseUrl + '/api/courses';
 const enrollmentEndpoint = baseUrl + '/api/enrollments';
 
-function CourseCard(input: CourseCardProps) {
+const CourseCard: React.FC<CourseCardProps> = ({courseData, userProfile, enrolled, featured, update}) => {
     const [showComments, setShowComments] = useState(false);
     const [showJoinConfirm, setJoinConfirm] = useState(false);
     const [showDropConfirm, setDropConfirm] = useState(false);
@@ -19,17 +19,16 @@ function CourseCard(input: CourseCardProps) {
     const [editCommentId, setEditCommentId] = useState(0);
     const [deleteCommentId, setDeleteCommentId] = useState(0);
     const [comment, setComment] = useState(new Comment(0,'',new Date().toUTCString(),0,''));
-    
-    const navigate = useNavigate();
+    const [refreshComments, setRefreshComments] = useState('');
 
     useEffect(() => {
-        FetchWrapper(`${courseEndpoint}/${input.courseData.courseId}/comments`, {}).then(response => {
+        FetchWrapper(`${courseEndpoint}/${courseData.courseId}/comments`, {}).then(response => {
             if(response.status === 200)
                 return response.json();
             else 
                 return Promise.reject(`Unexpected Status Code: ${response.status}`);
         }).then(data => setComments(data)).catch(console.log);
-    }, [comments]);
+    }, [refreshComments]);
 
 
     const onCommentsClose = () => {
@@ -44,7 +43,7 @@ function CourseCard(input: CourseCardProps) {
     const onJoinConfirmShow = () => setJoinConfirm(true);
     const onDropConfirmShow = () => setDropConfirm(true);
     
-    const data = input.courseData;
+    const data = courseData;
     const tt = (<Tooltip> {data.category.categoryName + '\n' + data.category.categoryDescription} </Tooltip>);
 
     const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -63,6 +62,7 @@ function CourseCard(input: CourseCardProps) {
             }`
             };
             FetchWrapper('http://localhost:8080/api/comments', request).then(response => {
+                setRefreshComments('added');
                 if(response.status === 201 || response.status === 400)
                     return response.json();
                 else 
@@ -85,6 +85,7 @@ function CourseCard(input: CourseCardProps) {
             };
 
             FetchWrapper('http://localhost:8080/api/comments/'+editCommentId, request).then(response => {
+                setRefreshComments('edited')
                 if(response.status === 204 || response.status === 400)
                     return response.json();
                 else 
@@ -104,6 +105,7 @@ function CourseCard(input: CourseCardProps) {
             }
         };
         FetchWrapper('http://localhost:8080/api/comments/'+deleteCommentId, request).then(response => {
+            setRefreshComments('deleted')
             if(response.status === 204 || response.status === 400)
                 return response.json();
             else 
@@ -116,8 +118,8 @@ function CourseCard(input: CourseCardProps) {
         let request = {
             method: "POST"
         };
-        FetchWrapper('http://localhost:8080/api/enrollments/'+input.courseData.courseId+'/'+localStorage.getItem('userId'), request)
-        .then(() => {onCommentsClose();}).catch(console.log);
+        FetchWrapper('http://localhost:8080/api/enrollments/'+courseData.courseId+'/'+localStorage.getItem('userId'), request)
+        .then(() => {onCommentsClose();if (update != undefined) update(courseData.courseName+'enrolled')}).catch(console.log);
     };
 
     const dropUser = () => {
@@ -126,9 +128,9 @@ function CourseCard(input: CourseCardProps) {
         };
 
         let deleteId = 0;
-        let profile: UserProfile = JSON.parse(JSON.stringify(input.userProfile));
+        let profile: UserProfile = JSON.parse(JSON.stringify(userProfile));
         for (let e of profile.enrollmentList) {
-            if (e.course.courseId === input.courseData.courseId) {
+            if (e.course.courseId === courseData.courseId) {
                 deleteId = e.enrollmentId
                 break;
             }
@@ -136,7 +138,7 @@ function CourseCard(input: CourseCardProps) {
 
         if (deleteId > 0) {
             FetchWrapper(`${enrollmentEndpoint}/${deleteId}`, request)
-            .then(() => {onCommentsClose();}).catch(console.log);
+            .then(() => {onCommentsClose();if (update != undefined) update(courseData.courseName+'dropped')}).catch(console.log);
         }
     }
     
@@ -177,8 +179,8 @@ function CourseCard(input: CourseCardProps) {
                 onChange={(event) => {
                     const newComment = {...comment};
                     newComment.comment = event.currentTarget.value;
-                    for (let e of input.userProfile.enrollmentList) {
-                        if (e.course.courseId === input.courseData.courseId) {
+                    for (let e of userProfile.enrollmentList) {
+                        if (e.course.courseId === courseData.courseId) {
                             newComment.enrollmentId = e.enrollmentId;
                             break;
                         }
@@ -191,8 +193,8 @@ function CourseCard(input: CourseCardProps) {
                 onChange={(event) => {
                     const newComment = {...comment};
                     newComment.comment = event.currentTarget.value;                    
-                    for (let e of input.userProfile.enrollmentList) {
-                        if (e.course.courseId === input.courseData.courseId) {
+                    for (let e of userProfile.enrollmentList) {
+                        if (e.course.courseId === courseData.courseId) {
                             newComment.enrollmentId = e.enrollmentId;
                             break;
                         }
@@ -227,7 +229,7 @@ function CourseCard(input: CourseCardProps) {
         {/* Comments Modal */}
         <Modal show={showComments} onHide={onCommentsClose}>
             <Modal.Header closeButton>
-            <Modal.Title>{isEditing? 'Edit Comment' : input.courseData.courseName + ' Comments'}</Modal.Title>
+            <Modal.Title>{isEditing? 'Edit Comment' : courseData.courseName + ' Comments'}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 {!isEditing && !isDeleting && !isAdding && renderComments()}
@@ -239,7 +241,7 @@ function CourseCard(input: CourseCardProps) {
             <button className="btn btn-secondary" onClick={onCommentsClose}>
                 Close
             </button>
-            {input.enrolled && !isEditing && !isDeleting && (
+            {enrolled && !isEditing && !isDeleting && (
             <button className="btn btn-success" onClick={() => setIsAdding(true)}>
                 Add New Comment
             </button>
@@ -250,7 +252,7 @@ function CourseCard(input: CourseCardProps) {
         {/* Confirm Join Course Modal */}
         <Modal show={showJoinConfirm} onHide={onCommentsClose}>
             <Modal.Header closeButton>
-            <Modal.Title>{input.courseData.courseName}</Modal.Title>
+            <Modal.Title>{courseData.courseName}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 Join this course?
@@ -268,7 +270,7 @@ function CourseCard(input: CourseCardProps) {
         {/* Confirm Drop Course Modal */}
         <Modal show={showDropConfirm} onHide={onCommentsClose}>
             <Modal.Header closeButton>
-            <Modal.Title>{input.courseData.courseName}</Modal.Title>
+            <Modal.Title>{courseData.courseName}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 Drop this course?
@@ -293,18 +295,18 @@ function CourseCard(input: CourseCardProps) {
                 <h5>Estimated Duration: {data.estimateDuration+' hours'}</h5>
                 <h5>Price: {'$'+data.price}</h5>
 
-                {!input.featured && localStorage.getItem("roleName") !== "ROLE_ADMIN" && (
-                    <h5 className={input.enrolled? "text-success" : "text-warning"}>
-                        {input.enrolled? "Status: Enrolled ✓" : "Status: Not Enrolled ❌"}
+                {!featured && localStorage.getItem("roleName") !== "ROLE_ADMIN" && (
+                    <h5 className={enrolled? "text-success" : "text-warning"}>
+                        {enrolled? "Status: Enrolled ✓" : "Status: Not Enrolled ❌"}
                     </h5>
                 )}                
     
                 <div className="flex-row">
 
-                {!input.featured && (
+                {!featured && (
                     <>
                         {localStorage.getItem("roleName") !== "ROLE_ADMIN" && 
-                        (input.enrolled ? 
+                        (enrolled ? 
                             (
                                 <button className="btn btn-danger" onClick={onDropConfirmShow}>Drop Course 🗑</button>
                             ) : (

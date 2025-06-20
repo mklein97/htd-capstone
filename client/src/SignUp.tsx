@@ -87,7 +87,7 @@ function SignUp() {
             },
             body: JSON.stringify(registerRequestDTO)
         }
-
+        console.log(JSON.stringify(registerRequestDTO))
         FetchWrapper(registerEndpoint, request)
             .then(response => {
                 if (response.status === 201 || response.status === 400) {

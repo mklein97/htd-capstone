@@ -19,6 +19,7 @@ function Courses() {
     const URL = 'http://localhost:8080/api/courses'
     const [courses, setCourses] = useState([]);
     const [userProfile, setUserProfile] = useState(USER_DEFAULT);
+    const [update, setUpdate] = useState('');
 
     useEffect(() => {
         let request = {
@@ -39,8 +40,13 @@ function Courses() {
             else 
                 return Promise.reject(`Unexpected Status Code: ${response.status}`);
         }).then(data => setUserProfile(data)).catch(console.log);
-    }, [courses])
+    }, [update])
     
+    let handleCallback = (u: string) => {
+        // Update the name in the component's state
+        setUpdate(u);
+    };
+
     let cards: JSX.Element[] = [];
     let cardData: Array<Course> = [];
     
@@ -60,6 +66,7 @@ function Courses() {
             }
         
         let temp = new CourseCardProps(c, userProfile, enrolled);
+        temp.update = handleCallback;
         cards.push(<CourseCard key={c.courseId} {...temp}></CourseCard>);
         }
     });

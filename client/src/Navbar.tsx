@@ -18,11 +18,13 @@ function Navbar({ user, setUser }: NavbarProps) {
     return (
         <>
             <header className="bg-primary border-bottom">
-                <nav className="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
+                <nav className="navbar navbar-expand-sm bg-primary" data-bs-theme="dark">
                     <div className="container-fluid">
                         <Link to={'/'} className="navbar-brand">Noodemy</Link>
-
-                        <div className="collapse navbar-collapse">
+                        <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span className="navbar-toggler-icon"></span>
+                        </button>
+                        <div className="collapse navbar-collapse" id="navbarSupportedContent">
                             <ul className="navbar-nav me-auto">
                                 <Link to="/" className="nav-item nav-link">Home</Link>
 
